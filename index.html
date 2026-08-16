@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Spotify-inspired music discovery and playlist web app using the Kaggle Spotify Tracks Dataset.">
+  <title>Soundify — Spotify Clone</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar" id="sidebar">
+      <div class="brand"><span class="brand-mark">◉</span><span>Soundify</span></div>
+      <nav class="nav">
+        <button class="nav-item active" data-view="home">⌂ <span>Home</span></button>
+        <button class="nav-item" data-view="search">⌕ <span>Search</span></button>
+        <button class="nav-item" data-view="library">▣ <span>Your Library</span></button>
+        <button class="nav-item" data-view="liked">♥ <span>Liked Songs</span></button>
+      </nav>
+      <div class="sidebar-section">
+        <div class="section-label">Playlists</div>
+        <button class="playlist-link" data-playlist="My Playlist">＋ My Playlist</button>
+        <button class="playlist-link" data-playlist="Study Mix">＋ Study Mix</button>
+      </div>
+      <div class="sidebar-bottom">
+        <div class="dataset-status" id="datasetStatus">Loading dataset…</div>
+        <a href="https://www.kaggle.com/datasets/maharshipandya/-spotify-tracks-dataset/code" target="_blank" rel="noopener">Kaggle dataset ↗</a>
+      </div>
+    </aside>
+
+    <main class="main">
+      <header class="topbar">
+        <button class="mobile-menu" id="mobileMenu">☰</button>
+        <div class="search-box">
+          <span>⌕</span>
+          <input id="searchInput" type="search" placeholder="What do you want to play?" autocomplete="off">
+          <button id="clearSearch" class="clear-search hidden">×</button>
+        </div>
+        <div class="top-actions">
+          <button class="ghost-btn" id="loadDatasetBtn">Load CSV</button>
+          <label class="file-label">Use your CSV<input id="csvFileInput" type="file" accept=".csv"></label>
+        </div>
+      </header>
+
+      <section id="homeView" class="view">
+        <section class="hero">
+          <div>
+            <p class="eyebrow">YOUR MUSIC SPACE</p>
+            <h1>Music for every moment.</h1>
+            <p class="hero-copy">Explore tracks from the Spotify Tracks Dataset, create playlists, save favourites and discover similar songs.</p>
+            <button class="primary-btn" id="exploreBtn">Explore music</button>
+          </div>
+          <div class="hero-art"><span>♪</span><span>♫</span><span>♬</span></div>
+        </section>
+
+        <section class="section">
+          <div class="section-head"><h2>Popular tracks</h2><button class="text-btn" data-view-target="search">See all</button></div>
+          <div id="popularGrid" class="card-grid"></div>
+        </section>
+
+        <section class="section">
+          <div class="section-head"><h2>Browse by genre</h2></div>
+          <div id="genreChips" class="chips"></div>
+        </section>
+
+        <section class="section">
+          <div class="section-head"><h2>Recommended for you</h2><span class="muted">Based on your selected track</span></div>
+          <div id="recommendGrid" class="card-grid"></div>
+        </section>
+      </section>
+
+      <section id="searchView" class="view hidden">
+        <div class="page-title"><p class="eyebrow">DISCOVER</p><h1>Search</h1><p id="searchSummary" class="muted">Search by track, artist, album or genre.</p></div>
+        <div class="filter-row">
+          <select id="genreFilter"><option value="">All genres</option></select>
+          <select id="sortFilter">
+            <option value="popularity">Most popular</option>
+            <option value="title">Title A–Z</option>
+            <option value="artist">Artist A–Z</option>
+            <option value="energy">Energy</option>
+            <option value="danceability">Danceability</option>
+          </select>
+        </div>
+        <div id="searchGrid" class="card-grid"></div>
+        <div id="emptyState" class="empty hidden">No tracks found. Try another search.</div>
+      </section>
+
+      <section id="libraryView" class="view hidden">
+        <div class="page-title"><p class="eyebrow">YOUR COLLECTION</p><h1>Your Library</h1><p class="muted">Saved tracks and local playlists.</p></div>
+        <div id="libraryGrid" class="card-grid"></div>
+      </section>
+
+      <section id="likedView" class="view hidden">
+        <div class="liked-hero">
+          <div class="liked-icon">♥</div>
+          <div><p class="eyebrow">PLAYLIST</p><h1>Liked Songs</h1><p id="likedCount" class="muted">0 songs</p></div>
+        </div>
+        <div id="likedGrid" class="card-grid"></div>
+      </section>
+    </main>
+  </div>
+
+  <footer class="player">
+    <div class="now-playing">
+      <div id="playerCover" class="cover small-cover">♪</div>
+      <div class="now-text"><strong id="playerTitle">Select a track</strong><span id="playerArtist">Your music will appear here</span></div>
+      <button class="icon-btn" id="likeBtn" title="Like">♡</button>
+    </div>
+    <div class="player-center">
+      <div class="controls">
+        <button class="icon-btn" id="shuffleBtn" title="Shuffle">⤨</button>
+        <button class="icon-btn" id="prevBtn" title="Previous">◀</button>
+        <button class="play-btn" id="playBtn" title="Play">▶</button>
+        <button class="icon-btn" id="nextBtn" title="Next">▶</button>
+        <button class="icon-btn" id="repeatBtn" title="Repeat">↻</button>
+      </div>
+      <div class="progress-row"><span id="currentTime">0:00</span><input id="progressBar" type="range" min="0" max="100" value="0"><span id="duration">0:00</span></div>
+    </div>
+    <div class="volume"><span>🔊</span><input id="volumeBar" type="range" min="0" max="1" step="0.01" value="0.8"></div>
+  </footer>
+
+  <dialog id="trackDialog">
+    <button class="dialog-close" id="dialogClose">×</button>
+    <div id="dialogContent"></div>
+  </dialog>
+
+  <input type="file" id="hiddenCsvInput" accept=".csv" hidden>
+  <audio id="audio"></audio>
+  <script src="js/app.js"></script>
+</body>
+</html>
